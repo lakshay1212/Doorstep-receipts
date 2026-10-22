@@ -17,6 +17,7 @@ import { generateVerificationSeal, verifyEvidenceIntegrity } from './domain/veri
 import { FUTURE_SKEW_MS, evaluateVisit } from './domain/visit.js';
 import { ingestWebhook } from './ingest.js';
 import { renderGonePage, renderReceiptPage } from './render/receipt.js';
+import { DASHBOARD_HTML } from './render/dashboard.js';
 import { DEMO_DEVICES, listDevices } from './ring/client.js';
 import {
   SCENARIOS,
@@ -99,6 +100,8 @@ export function createApp(deps: AppDeps) {
     return view;
   };
 
+  app.get('/', (_req, res) => void res.type('html').send(DASHBOARD_HTML));
+  app.get('/index.html', (_req, res) => void res.type('html').send(DASHBOARD_HTML));
   app.get('/healthz', (_req, res) => void res.json({ ok: true }));
 
   // ---- Ring webhook (raw body, because the HMAC covers the exact bytes) ----
