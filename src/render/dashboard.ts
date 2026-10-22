@@ -6,30 +6,34 @@ export const DASHBOARD_HTML = `<!doctype html>
 <title>Doorstep Receipts — Ring Access Control & Verification</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Franklin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="/app.css">
 </head>
 <body class="app">
 <div class="judge-banner">
-  <div class="judge-title"><span>🏆 Hackathon Judge Showcase:</span></div>
-  <div class="judge-actions">
-    <button type="button" class="btn-judge" data-judge="access" title="Simulates in-window arrival, unlocks Smart Lock PIN, and generates verified receipt">1. Access Control (On-Time + PIN)</button>
-    <button type="button" class="btn-judge" data-judge="dispute" title="Simulates late arrival dispute audited by Bedrock AI">2. Bedrock AI Dispute Arbiter</button>
-    <button type="button" class="btn-judge" data-judge="outage" title="Simulates camera outage to ensure contractor is not unfairly penalized">3. Fair Outage Protection</button>
-    <button type="button" class="btn-judge" data-judge="privacy" title="Demonstrates privacy gate discarding outside motion without storing footage">4. Privacy Gate Drop</button>
+  <div class="judge-inner">
+  <div class="judge-title"><span>Showcase:</span></div>
+  <div class="judge-actions" role="group" aria-label="Showcase scenarios">
+    <button type="button" class="btn-judge" aria-pressed="false" data-judge="access" title="Simulates in-window arrival, unlocks Smart Lock PIN, and generates verified receipt">1. Access Control (On-Time + PIN)</button>
+    <button type="button" class="btn-judge" aria-pressed="false" data-judge="dispute" title="Simulates late arrival dispute audited by Bedrock AI">2. Bedrock AI Dispute Arbiter</button>
+    <button type="button" class="btn-judge" aria-pressed="false" data-judge="outage" title="Simulates camera outage to ensure contractor is not unfairly penalized">3. Fair Outage Protection</button>
+    <button type="button" class="btn-judge" aria-pressed="false" data-judge="privacy" title="Demonstrates privacy gate discarding outside motion without storing footage">4. Privacy Gate Drop</button>
+  </div>
   </div>
 </div>
 
 <header class="masthead">
+  <div class="masthead-inner">
   <div class="plate"><span>Doorstep Receipts</span></div>
-  <p id="mode" class="mode"></p>
+  <div class="mode-badge"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><p id="mode" class="mode"></p></div>
+  </div>
 </header>
 
 <div class="layout">
   <nav class="visits" aria-label="Visits">
     <div class="visits-head">
       <h2>Visits</h2>
-      <button type="button" class="btn primary" data-action="new">New visit</button>
+      <button type="button" class="btn primary" data-action="new"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>New visit</button>
     </div>
     <ul id="visit-list" class="visit-list"></ul>
   </nav>
@@ -79,7 +83,7 @@ export const DASHBOARD_HTML = `<!doctype html>
 
 <dialog id="dispute-dialog" class="dialog">
   <form method="dialog" id="dispute-form">
-    <h2>⚖️ Amazon Bedrock Dispute Arbiter</h2>
+    <h2>Dispute Arbiter</h2>
     <p class="muted">Contractors or homeowners can submit a disputed visit claim. Amazon Bedrock evaluates the claim against cryptographic Ring doorbell facts and camera telemetry to provide an impartial settlement recommendation.</p>
     <label>Claim to evaluate:
       <textarea name="claim" id="dispute-claim" rows="3" required placeholder="e.g. I arrived at the door at 9:15 AM and rang twice, but nobody answered."></textarea>

@@ -10,7 +10,12 @@ function esc(s: string): string {
 }
 
 export const FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap';
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Franklin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
+
+/** Lucide line icon wrapper (same set and sizing as the dashboard). */
+function svgIcon(paths: string): string {
+  return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths}</svg>`;
+}
 
 export function renderReceiptPage(r: ReceiptView, qrSvg: string = ''): string {
   const rows: string[] = [];
@@ -30,7 +35,14 @@ export function renderReceiptPage(r: ReceiptView, qrSvg: string = ''): string {
     : '<p class="muted">No doorstep activity recorded.</p>';
 
   const lockState = r.smartLock.state;
-  const lockIcon = lockState === 'active' ? '🔓' : '🔒';
+  const lockIcon = svgIcon(
+    lockState === 'active'
+      ? '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>'
+      : '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  );
+  const shieldIcon = svgIcon(
+    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  );
 
   return `<!doctype html>
 <html lang="en">
@@ -92,11 +104,11 @@ export function renderReceiptPage(r: ReceiptView, qrSvg: string = ''): string {
   <!-- Cryptographic Trust & Verification Seal -->
   <section class="seal-box" aria-label="Cryptographic Verification">
     <div class="seal-inner">
-      <div class="seal-icon">🛡️</div>
+      <div class="seal-icon">${shieldIcon}</div>
       <div class="seal-info">
         <h4>Ring Webhook HMAC Verification Seal</h4>
         <p class="seal-fp">Signature Digest: <code>${esc(r.verificationSeal.fingerprint)}</code></p>
-        <p class="seal-meta">Tamper-Proof SHA256 • Verified at ${esc(r.verificationSeal.certifiedAt)}</p>
+        <p class="seal-meta">Tamper-Proof SHA256 &bull; Verified at ${esc(r.verificationSeal.certifiedAt)}</p>
       </div>
     </div>
   </section>
@@ -116,6 +128,8 @@ export function renderGonePage(message: string): string {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex"><title>Receipt unavailable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONTS_HREF}"><link rel="stylesheet" href="/app.css"></head>
 <body class="receipt-page"><main class="tape tape-solo"><header class="tape-head"><p class="brand">Doorstep Receipts</p><h1>Receipt unavailable</h1></header>
 <p class="headline">${esc(message)}</p><p class="detail">Ask the homeowner to send a new link.</p></main></body></html>`;

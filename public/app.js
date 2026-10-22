@@ -3,6 +3,33 @@ const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const enc = encodeURIComponent;
 
+/* Lucide line icons (inline, 24px grid, 2px stroke) — the only icon set used. */
+const ICONS = {
+  'lock-open': '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  'shield-check': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  scale: '<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+  send: '<path d="M14.54 21.69a.5.5 0 0 0 .94-.03l6.5-19a.5.5 0 0 0-.64-.64l-19 6.5a.5.5 0 0 0-.03.94l7.93 3.18a2 2 0 0 1 1.11 1.11z"/><path d="m21.85 2.15-10.94 10.93"/>',
+  'file-text': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+  'log-out': '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  'rotate-ccw': '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  bell: '<path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+};
+const icon = (name, cls = 'icon') =>
+  `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+
+/* Button that triggered the in-flight request; gets the shared loading state. */
+let pendingBtn = null;
+
 const SCENARIO_LABELS = {
   arrive_early: 'Contractor arrives early',
   arrive_on_time: 'Contractor arrives in the window',
@@ -133,7 +160,7 @@ function factRows(v) {
 function smartLockHtml(v) {
   const sl = v.smartLock;
   if (!sl) return '';
-  const lockIcon = sl.state === 'active' ? '🔓' : '🔒';
+  const lockIcon = icon(sl.state === 'active' ? 'lock-open' : 'lock');
   return `
     <div class="access-box access-${esc(sl.state)}">
       <div class="access-head">
@@ -152,9 +179,9 @@ function smartLockHtml(v) {
       ` : `
         <p class="access-msg">${sl.state === 'revoked' ? 'Access was revoked by homeowner.' : 'Smart Lock remains locked. Temporary PINs are only generated for verified on-time visits.'}</p>
       `}
-      <div class="action-row" style="margin-top:0.6rem">
+      <div class="action-row">
         <button type="button" class="btn small${sl.state === 'revoked' ? ' primary' : ' danger'}" data-action="toggle-lock">
-          ${sl.state === 'revoked' ? 'Restore access PIN' : 'Revoke keypad access'}
+          ${icon(sl.state === 'revoked' ? 'lock-open' : 'lock')}${sl.state === 'revoked' ? 'Restore access PIN' : 'Revoke keypad access'}
         </button>
       </div>
     </div>
@@ -167,20 +194,20 @@ function verificationHtml(v) {
   return `
     <div class="seal-box">
       <div class="seal-inner">
-        <div class="seal-icon">🛡️</div>
+        <div class="seal-icon">${icon('shield-check')}</div>
         <div class="seal-info">
           <h4>Ring Webhook HMAC Verification Seal</h4>
           <p class="seal-fp">Signature: <code>${esc(s.fingerprint)}</code> (${esc(s.algorithm)})</p>
           <p class="seal-meta">Tamper-Proof SHA256 • Certified at ${esc(s.certifiedAt)}</p>
-          <div class="action-row" style="margin-top:0.5rem">
+          <div class="action-row">
             <button type="button" class="btn small" data-action="check-integrity" data-visit="${esc(v.id)}">
-              ✓ Verify Evidence Integrity
+              ${icon('check')}Verify Evidence Integrity
             </button>
           </div>
           ${state.integrityCheck && state.integrityCheck.visitId === v.id ? `
             <div class="integrity-report ${state.integrityCheck.verified ? 'report-pass' : 'report-fail'}">
-              <strong>${state.integrityCheck.verified ? '✓ Integrity Verified: 100% Authentic' : '⚠ Tamper Detected: Hash Mismatch'}</strong>
-              <p class="muted" style="margin:0.2rem 0">Canonical Hash: <code>${esc(state.integrityCheck.computedDigest.slice(0, 16))}...</code></p>
+              <strong>${state.integrityCheck.verified ? `${icon('check')}Integrity Verified: 100% Authentic` : `${icon('alert')}Tamper Detected: Hash Mismatch`}</strong>
+              <p class="muted">Canonical Hash: <code>${esc(state.integrityCheck.computedDigest.slice(0, 16))}...</code></p>
               ${state.integrityCheck.failureReason ? `<p class="form-error">${esc(state.integrityCheck.failureReason)}</p>` : ''}
             </div>
           ` : ''}
@@ -201,7 +228,7 @@ function disputeHtml(v) {
   return `
     <div class="dispute-card">
       <div class="dispute-card-head">
-        <h3>⚖️ Amazon Bedrock Dispute Audit</h3>
+        <h3>${icon('scale')}Amazon Bedrock Dispute Audit</h3>
         <span class="verdict-tag ${verdictClass}">${esc(d.verdict.toUpperCase())} (${Math.round(d.confidence * 100)}% confidence)</span>
       </div>
       <p class="dispute-claim">Claim: "${esc(d.contractorClaim)}"</p>
@@ -255,11 +282,11 @@ function renderDetail() {
   const v = selectedVisit();
   if (!v) {
     const demo = state.config.simulatorEnabled
-      ? '<button type="button" class="btn primary" data-action="demo-story">Try the demo</button> '
+      ? `<button type="button" class="btn primary" data-action="demo-story">${icon('play')}Try the demo</button> `
       : '';
-    el.innerHTML = `<div class="tape"><h1>Nothing to show yet</h1>
+    el.innerHTML = `<div class="tape tape-empty"><span class="empty-icon">${icon('file-text')}</span><h1>Nothing to show yet</h1>
       <p class="detail">Create a visit with an arrival window. Doorstep activity inside that window becomes a receipt you can share.${state.config.simulatorEnabled ? ' Or test one of the Judge Showcase scenarios above.' : ''}</p>
-      <p class="empty-cta">${demo}<button type="button" class="btn${demo ? '' : ' primary'}" data-action="new">New visit</button></p></div>`;
+      <p class="empty-cta">${demo}<button type="button" class="btn${demo ? '' : ' primary'}" data-action="new">${icon('plus')}New visit</button></p></div>`;
     return;
   }
   const shareActive = v.share && v.share.active;
@@ -302,9 +329,9 @@ function renderDetail() {
 
     <section class="actions" aria-label="Actions for this visit">
       <div class="action-row">
-        ${v.canConfirmDeparture ? '<button type="button" class="btn primary" data-action="depart">Confirm they have left</button>' : ''}
-        <button type="button" class="btn" data-action="summary">${v.summary ? 'Rewrite summary' : 'Write summary'}</button>
-        <button type="button" class="btn" data-action="open-dispute">⚖️ Audit claim (Bedrock)</button>
+        ${v.canConfirmDeparture ? `<button type="button" class="btn primary" data-action="depart">${icon('log-out')}Confirm they have left</button>` : ''}
+        <button type="button" class="btn" data-action="summary">${icon('file-text')}${v.summary ? 'Rewrite summary' : 'Write summary'}</button>
+        <button type="button" class="btn" data-action="open-dispute">${icon('scale')}Audit claim (Bedrock)</button>
       </div>
       <div class="share-box">
         ${
@@ -312,16 +339,16 @@ function renderDetail() {
             ? `<label for="share-url"><b>Receipt link for ${esc(v.contractor)} (with QR Code)</b></label>
                <input id="share-url" readonly value="${esc(v.share.url)}">
                <div class="action-row">
-                 <button type="button" class="btn small" data-action="copy">Copy link</button>
-                 <a class="btn small" href="${esc(v.share.url)}" target="_blank" rel="noopener">Open Receipt</a>
-                 <button type="button" class="btn small danger" data-action="revoke">Revoke</button>
+                 <button type="button" class="btn small" data-action="copy">${icon('copy')}Copy link</button>
+                 <a class="btn small" href="${esc(v.share.url)}" target="_blank" rel="noopener">${icon('external')}Open Receipt</a>
+                 <button type="button" class="btn small danger" data-action="revoke">${icon('trash')}Revoke</button>
                </div>
                <p class="muted">Expires ${esc(v.share.expiresLabel)}. Contractor sees proof, Smart Lock PIN (if in-window), and QR pass.</p>`
-            : `<div class="action-row"><button type="button" class="btn primary" data-action="share">Create receipt link & QR</button></div>
+            : `<div class="action-row"><button type="button" class="btn primary" data-action="share">${icon('link')}Create receipt link & QR</button></div>
                <p class="muted">${v.share ? 'The last link has expired or was revoked. ' : ''}Generate a shareable receipt link for ${esc(v.contractor)}.</p>`
         }
       </div>
-      <div class="action-row"><button type="button" class="btn small danger" data-action="delete">Delete visit and its data</button></div>
+      <div class="action-row action-row-end"><button type="button" class="btn small danger" data-action="delete">${icon('trash')}Delete visit and its data</button></div>
     </section>`;
 }
 
@@ -347,7 +374,7 @@ function renderSide() {
         <option value="Housecall Pro">Housecall Pro</option>
         <option value="Custom">Custom Webhook</option>
       </select>
-      <button type="button" class="btn small" data-action="dispatch-biz"${!v ? ' disabled' : ''}>Dispatch Webhook</button>
+      <button type="button" class="btn small" data-action="dispatch-biz"${!v ? ' disabled' : ''}>${icon('send')}Dispatch Webhook</button>
     </div>
     <div class="biz-log">
       ${
@@ -365,7 +392,7 @@ function renderSide() {
                 ${state.showPayload[evt.id] ? `<pre class="biz-payload">${esc(JSON.stringify(evt.payload, null, 2))}</pre>` : ''}
               </div>
             `).join('')
-          : '<p class="muted" style="margin-top:0.5rem">No business webhooks dispatched yet.</p>'
+          : '<p class="muted">No business webhooks dispatched yet.</p>'
       }
     </div>
   `;
@@ -379,16 +406,16 @@ function renderSide() {
   const avail = (v && v.sim) || {};
   const scenarioBtn = (sc) => {
     const why = avail[sc];
-    return `<button type="button" class="btn small" data-action="sim" data-scenario="${esc(sc)}"${why ? ' disabled' : ''}>
-      <span>${esc(SCENARIO_LABELS[sc] || sc)}</span>${why ? `<span class="why">${esc(why)}</span>` : ''}</button>`;
+    return `<button type="button" class="btn small" data-action="sim" data-scenario="${esc(sc)}"${why ? ` disabled title="${esc(why)}"` : ''}>
+      <span class="label">${esc(SCENARIO_LABELS[sc] || sc)}</span>${why ? `<span class="why">${esc(why)}</span>` : ''}</button>`;
   };
   sim.innerHTML = `<h2 id="sim-h">Simulate Ring Doorbell</h2>
     <p>Signed HMAC Ring webhook v1.1 payloads.</p>
     <div class="sim-group">
       <h3>Quick presets</h3>
-      <button type="button" class="btn small primary" data-action="demo-story">Play on-time story</button>
-      <button type="button" class="btn small" data-action="demo-open">Window open now</button>
-      <button type="button" class="btn small" data-action="demo-ended">Window already ended</button>
+      <button type="button" class="btn small primary" data-action="demo-story">${icon('play')}<span class="label">Play on-time story</span></button>
+      <button type="button" class="btn small" data-action="demo-open">${icon('clock')}<span class="label">Window open now</span></button>
+      <button type="button" class="btn small" data-action="demo-ended">${icon('clock')}<span class="label">Window already ended</span></button>
     </div>
     <div class="sim-group">
       <h3>Events for selected visit</h3>
@@ -396,7 +423,7 @@ function renderSide() {
       ${v ? '<p class="muted">Disabled scenarios do not fit this window.</p>' : ''}
     </div>
     <div class="sim-group">
-      <button type="button" class="btn small danger" data-action="demo-reset">Reset demo data</button>
+      <button type="button" class="btn small danger" data-action="demo-reset">${icon('rotate-ccw')}<span class="label">Reset demo data</span></button>
     </div>`;
 }
 
@@ -426,12 +453,17 @@ async function refresh({ force = false } = {}) {
 }
 
 async function act(fn, okMsg) {
+  const btn = pendingBtn;
+  pendingBtn = null;
+  if (btn) { btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
   try {
     await fn();
     await refresh({ force: true });
     if (okMsg) toast(okMsg);
   } catch (e) {
     toast(e.message);
+  } finally {
+    if (btn) { btn.classList.remove('is-loading'); btn.removeAttribute('aria-busy'); }
   }
 }
 
@@ -512,7 +544,7 @@ async function runJudgeScenario(type) {
       await api(`/api/visits/${enc(created.id)}/share`, { method: 'POST', body: { days: 7 } });
       await api(`/api/visits/${enc(created.id)}/business-dispatch`, { method: 'POST', body: { platform: 'Jobber' } });
       await refresh({ force: true });
-      toast('🏆 Showcase 1: On-time arrival verified, Smart Lock PIN issued, and Jobber webhook fired!');
+      toast('Showcase 1: On-time arrival verified, Smart Lock PIN issued, and Jobber webhook fired!');
     } else if (type === 'dispute') {
       // 2. Late arrival + Bedrock AI Dispute audit
       const created = await api('/api/dev/demo-visit', { method: 'POST', body: { kind: 'ended', timeZone: tz } });
@@ -523,14 +555,14 @@ async function runJudgeScenario(type) {
         body: { claim: "I arrived at 9:15 AM and rang twice, but the client didn't open the door." },
       });
       await refresh({ force: true });
-      toast('🏆 Showcase 2: Bedrock AI evaluated late arrival claim against Ring ground-truth telemetry!');
+      toast('Showcase 2: Bedrock AI evaluated late arrival claim against Ring ground-truth telemetry!');
     } else if (type === 'outage') {
       // 3. Camera outage fair protection
       const created = await api('/api/dev/demo-visit', { method: 'POST', body: { kind: 'ended', timeZone: tz } });
       state.selected = created.id;
       await api('/api/dev/simulate', { method: 'POST', body: { visitId: created.id, scenario: 'camera_offline' } });
       await refresh({ force: true });
-      toast("🏆 Showcase 3: Ring camera outage detected. Verdict is fair \"Can't tell\" to protect contractor!");
+      toast("Showcase 3: Ring camera outage detected. Verdict is fair \"Can't tell\" to protect contractor!");
     } else if (type === 'privacy') {
       // 4. Privacy gate test
       await api('/api/dev/simulate', {
@@ -541,7 +573,7 @@ async function runJudgeScenario(type) {
         },
       });
       await refresh({ force: true });
-      toast('🏆 Showcase 4: Privacy Gate discarded outside motion with 0 bytes stored!');
+      toast('Showcase 4: Privacy Gate discarded outside motion with 0 bytes stored!');
     }
   } catch (err) {
     toast(`Showcase error: ${err.message}`);
@@ -549,7 +581,11 @@ async function runJudgeScenario(type) {
 }
 
 document.querySelectorAll('[data-judge]').forEach((btn) => {
-  btn.addEventListener('click', () => runJudgeScenario(btn.dataset.judge));
+  btn.addEventListener('click', async () => {
+    document.querySelectorAll('[data-judge]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    btn.classList.add('is-loading');
+    try { await runJudgeScenario(btn.dataset.judge); } finally { btn.classList.remove('is-loading'); }
+  });
 });
 
 /* ---------- actions ---------- */
@@ -557,6 +593,7 @@ document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-action]');
   if (!t) return;
   const a = t.dataset.action;
+  pendingBtn = t.classList.contains('btn') ? t : null;
   const v = selectedVisit();
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   switch (a) {
