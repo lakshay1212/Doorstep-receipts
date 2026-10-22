@@ -1,0 +1,640 @@
+/* Doorstep Receipts
+   Palette comes from the door itself: enamel house-number blue, navy ink, porch white,
+   and the brass of a doorbell button. Status tones are moss, brick and slate. */
+:root {
+  --enamel: #1c3faa;
+  --enamel-deep: #14307f;
+  --ink: #0f1b3d;
+  --porch: #f5f6fa;
+  --paper: #ffffff;
+  --brass: #b8860b;
+  --moss: #2f7d4f;
+  --brick: #b5412f;
+  --slate: #5d6781;
+  --rule: #c9cfdf;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --tone: var(--slate);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--porch);
+  color: var(--ink);
+  font: 400 1rem/1.5 var(--body);
+}
+h1, h2, h3, p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--enamel); outline-offset: 2px; }
+.muted { color: var(--slate); font-size: 0.9rem; }
+
+.outcome-on_time { --tone: var(--moss); }
+.outcome-early { --tone: var(--enamel); }
+.outcome-late, .outcome-no_arrival_detected { --tone: var(--brick); }
+.outcome-inconclusive_offline, .outcome-pending { --tone: var(--slate); }
+
+/* ---- Masthead: an enamel house-number plate ---- */
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+.plate {
+  background: var(--enamel);
+  color: #fff;
+  padding: 0.3rem 1.1rem;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 2px var(--enamel), inset 0 0 0 3.5px rgba(255, 255, 255, 0.92);
+  font: 700 1.55rem/1.1 var(--display);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.mode { color: var(--slate); font-size: 0.9rem; max-width: 60ch; }
+
+/* ---- Layout ---- */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr) minmax(250px, 310px);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  align-items: start;
+}
+@media (max-width: 1080px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .detail { order: 1; }
+  .visits { order: 0; }
+  .side { order: 2; }
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border: 1.5px solid var(--enamel);
+  background: transparent;
+  color: var(--enamel);
+  border-radius: 4px;
+  padding: 0.45rem 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover { background: rgba(28, 63, 170, 0.08); }
+.btn.primary { background: var(--enamel); color: #fff; }
+.btn.primary:hover { background: var(--enamel-deep); }
+.btn.danger { border-color: var(--brick); color: var(--brick); }
+.btn.danger:hover { background: rgba(181, 65, 47, 0.08); }
+.btn.small { padding: 0.25rem 0.6rem; font-size: 0.88rem; }
+.btn:disabled { border-color: var(--rule); color: var(--slate); background: transparent; cursor: not-allowed; }
+.btn .why { display: block; font-weight: 400; font-size: 0.8rem; line-height: 1.3; margin-top: 0.1rem; }
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--enamel);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* ---- Visit list ---- */
+.visits-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.visits h2, .side h2 { font: 700 1.5rem/1.1 var(--display); }
+.visit-list { list-style: none; margin: 0; padding: 0; }
+.visit {
+  display: grid;
+  width: 100%;
+  text-align: left;
+  gap: 0.1rem;
+  padding: 0.7rem 0.8rem 0.7rem 0.95rem;
+  background: transparent;
+  border: 0;
+  border-left: 4px solid var(--tone);
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+}
+.visit:hover { background: rgba(255, 255, 255, 0.7); }
+.visit.is-selected { background: var(--paper); border-left-width: 8px; padding-left: 0.75rem; }
+.visit-title { font: 600 1.3rem/1.15 var(--display); }
+.visit-meta, .visit-when { color: var(--slate); font-size: 0.88rem; }
+.visit-status { color: var(--tone); font-weight: 700; font-size: 0.92rem; }
+.empty { padding: 1rem 0; color: var(--slate); }
+.empty-cta { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+/* ---- The receipt tape (the one memorable element) ---- */
+.tape {
+  position: relative;
+  max-width: 460px;
+  margin: 0 auto 14px;
+  padding: 1.75rem 1.6rem 2.1rem;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+}
+.tape::before, .tape::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  height: 12px;
+  background:
+    linear-gradient(135deg, var(--paper) 50%, transparent 50%) 0 0 / 14px 12px repeat-x,
+    linear-gradient(225deg, var(--paper) 50%, transparent 50%) 0 0 / 14px 12px repeat-x;
+}
+.tape::before { top: -11px; transform: scaleY(-1); }
+.tape::after { bottom: -11px; }
+.tape-head { text-align: left; }
+.tape .brand { font: 600 1.05rem var(--display); color: var(--enamel); letter-spacing: 0.03em; }
+.tape .receipt-no { color: var(--slate); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.tape h1 { font: 700 2.5rem/1.02 var(--display); margin-top: 0.6rem; }
+.tape .who { color: var(--slate); }
+
+.stamp {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0 1.25rem;
+}
+.stamp span {
+  display: inline-block;
+  padding: 0.15rem 1rem 0.2rem;
+  border: 3px double var(--tone);
+  color: var(--tone);
+  font: 700 2.1rem/1.1 var(--display);
+  letter-spacing: 0.02em;
+  transform: rotate(-3deg);
+  mix-blend-mode: multiply;
+  background: transparent;
+}
+.headline { font-weight: 700; font-size: 1.1rem; line-height: 1.4; }
+.detail-line, .tape .detail { color: var(--slate); margin-top: 0.35rem; }
+
+.facts { margin: 1.4rem 0 0; padding: 0; }
+.fact { display: flex; align-items: baseline; padding: 0.2rem 0; }
+.fact dt { flex: 1; display: flex; align-items: baseline; gap: 0.5rem; color: var(--slate); }
+.fact dt::after { content: ""; flex: 1; border-bottom: 1px dotted var(--slate); transform: translateY(-0.25em); }
+.fact dd { margin: 0 0 0 0.5rem; font: 600 1.2rem/1.2 var(--display); font-variant-numeric: tabular-nums; text-align: right; }
+
+.tape h2 { font: 700 1.3rem/1.1 var(--display); margin: 1.6rem 0 0.5rem; }
+.timeline { list-style: none; margin: 0; padding: 0 0 0 0.35rem; }
+.timeline li, .sig {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.6rem 1fr auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0 0.35rem 1.1rem;
+  border-left: 2px solid var(--rule);
+}
+.timeline li::before, .sig .mark {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 0.85rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--enamel);
+  border: 2px solid var(--paper);
+}
+.sig.kind-button_press .mark { background: var(--brass); }
+.sig .mark { position: absolute; }
+.t { font: 600 1.15rem var(--display); font-variant-numeric: tabular-nums; }
+.sig.is-excluded .t, .sig.is-excluded .what { text-decoration: line-through; color: var(--slate); }
+.sig.is-new { animation: arrive 1.6s ease-out; }
+@keyframes arrive { from { background: rgba(184, 134, 11, 0.28); } to { background: transparent; } }
+
+.summary { margin-top: 0.2rem; }
+.summary-src { color: var(--slate); font-size: 0.82rem; margin-top: 0.35rem; }
+
+.tape-foot { margin-top: 1.6rem; padding-top: 1rem; border-top: 1px dashed var(--slate); color: var(--slate); font-size: 0.85rem; }
+.tape-foot p + p { margin-top: 0.4rem; }
+.print-btn { margin-top: 0.9rem; }
+
+/* ---- Actions under the tape ---- */
+.actions { max-width: 460px; margin: 1.6rem auto 0; display: grid; gap: 1rem; }
+.action-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.share-box { display: grid; gap: 0.5rem; }
+.share-box input {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+  font-size: 0.92rem;
+}
+
+/* ---- Side panel ---- */
+.side section + section { margin-top: 2rem; }
+.ledger-figures { display: flex; gap: 1.75rem; margin: 0.75rem 0; }
+.ledger-figures div { display: grid; }
+.ledger-figures b { font: 700 3rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.ledger-figures span { color: var(--slate); font-size: 0.9rem; }
+.ledger ul { margin: 0; padding-left: 1.1rem; color: var(--slate); font-size: 0.9rem; }
+.ledger li + li { margin-top: 0.3rem; }
+.sim p { color: var(--slate); font-size: 0.9rem; margin: 0.4rem 0 0.8rem; }
+.sim-group { display: grid; gap: 0.4rem; margin-bottom: 1rem; }
+.sim-group h3 { font: 600 1.1rem var(--display); }
+.sim .btn { text-align: left; }
+
+/* ---- Dialog and toast ---- */
+.dialog { border: 1px solid var(--rule); border-radius: 6px; padding: 1.5rem; width: min(520px, 94vw); background: var(--paper); color: var(--ink); }
+.dialog::backdrop { background: rgba(15, 27, 61, 0.45); }
+.dialog h2 { font: 700 1.8rem var(--display); }
+.dialog label { display: grid; gap: 0.25rem; margin-top: 0.9rem; font-weight: 700; font-size: 0.95rem; }
+.dialog input, .dialog select { padding: 0.5rem 0.6rem; border: 1.5px solid var(--rule); border-radius: 4px; background: #fff; font-weight: 400; }
+.row3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 0.6rem; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.dialog details { margin-top: 1rem; }
+.dialog summary { cursor: pointer; font-weight: 700; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
+.form-error { color: var(--brick); font-weight: 700; margin-top: 0.8rem; }
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  max-width: min(90vw, 480px);
+  padding: 0.6rem 1rem;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+/* ---- Public receipt page ---- */
+.receipt-page { padding: 2.5rem 1rem 3rem; }
+.tape-solo { margin-top: 1rem; }
+
+/* ---- Judge Showcase Header ---- */
+.judge-banner {
+  background: #0b1329;
+  border-bottom: 2px solid #233971;
+  padding: 0.6rem clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  color: #e2e8f0;
+}
+.judge-title {
+  font: 700 0.95rem var(--display);
+  letter-spacing: 0.05em;
+  color: #f6c85f;
+  text-transform: uppercase;
+}
+.judge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.btn-judge {
+  background: #18274d;
+  color: #fff;
+  border: 1px solid #36508a;
+  border-radius: 4px;
+  padding: 0.3rem 0.65rem;
+  font: 600 0.85rem var(--body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-judge:hover {
+  background: #253d77;
+  border-color: #60a5fa;
+  transform: translateY(-1px);
+}
+
+/* ---- Smart Lock Access Control Card ---- */
+.access-box {
+  margin: 1.25rem 0;
+  padding: 1rem 1.15rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--rule);
+  background: #fcfdfe;
+}
+.access-box.access-active {
+  border-color: #2f7d4f;
+  background: #f4faf6;
+}
+.access-box.access-locked {
+  border-color: var(--rule);
+  background: #f8f9fc;
+}
+.access-box.access-revoked {
+  border-color: var(--brick);
+  background: #fdf5f4;
+}
+.access-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.access-head h3 {
+  font: 700 1.2rem var(--display);
+  margin: 0;
+}
+.access-icon {
+  font-size: 1.5rem;
+}
+.access-badge {
+  display: inline-block;
+  font: 700 0.75rem var(--display);
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-active { background: #2f7d4f; color: #fff; }
+.badge-locked { background: var(--slate); color: #fff; }
+.badge-revoked { background: var(--brick); color: #fff; }
+.pin-wrapper {
+  margin: 0.85rem 0 0.4rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.pin-hint {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+.pin-code {
+  font: 700 1.85rem "JetBrains Mono", monospace;
+  background: #fff;
+  border: 2px solid #2f7d4f;
+  color: #14307f;
+  padding: 0.2rem 0.75rem;
+  border-radius: 4px;
+  letter-spacing: 0.2em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.access-msg {
+  font-size: 0.88rem;
+  color: var(--slate);
+  margin-top: 0.3rem;
+}
+
+/* ---- Cryptographic Verification Seal ---- */
+.seal-box {
+  margin: 1.3rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid #c9cfdf;
+  border-left: 4px solid var(--enamel);
+  background: #fcfdff;
+  border-radius: 0 4px 4px 0;
+}
+.seal-inner {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.seal-inner .seal-icon {
+  font-size: 1.6rem;
+}
+.seal-info h4 {
+  margin: 0;
+  font: 700 1.05rem var(--display);
+  color: var(--ink);
+}
+.seal-fp {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--slate);
+}
+.seal-fp code {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  color: var(--enamel-deep);
+  background: #eef2ff;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+.seal-meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--slate);
+}
+
+/* ---- QR Code on Receipt ---- */
+.tape-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.qr-block {
+  text-align: center;
+  background: #fff;
+  padding: 0.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.qr-block svg {
+  display: block;
+  width: 95px;
+  height: 95px;
+}
+.qr-sub {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--slate);
+  margin-top: 0.2rem;
+}
+
+/* ---- Bedrock AI Dispute Resolution Card ---- */
+.dispute-card {
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1.5px solid #d97706;
+  background: #fffbeb;
+}
+.dispute-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.dispute-card h3 {
+  font: 700 1.2rem var(--display);
+  color: #92400e;
+  margin: 0;
+}
+.verdict-tag {
+  font: 700 0.85rem var(--display);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.verdict-supported { background: #dcfce7; color: #15803d; border: 1.5px solid #86efac; }
+.verdict-contradicted { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+.verdict-inconclusive { background: #fef3c7; color: #b45309; border: 1.5px solid #fde68a; }
+.dispute-claim {
+  margin: 0.6rem 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #451a03;
+  padding: 0.4rem 0.6rem;
+  background: rgba(254, 243, 199, 0.4);
+  border-left: 3px solid #d97706;
+  border-radius: 2px;
+}
+.dispute-analysis {
+  margin: 0.5rem 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #1f2937;
+}
+.dispute-settlement {
+  margin: 0.5rem 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #065f46;
+}
+.dispute-evidence, .dispute-limitations {
+  margin: 0.6rem 0;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+.dispute-evidence {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #14532d;
+}
+.dispute-evidence ul, .dispute-limitations ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.2rem;
+}
+.dispute-limitations {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #7c2d12;
+}
+.dispute-footer {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #fde68a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.dispute-source {
+  font-size: 0.82rem;
+  color: var(--slate);
+  margin: 0;
+}
+
+/* Integrity Report Box */
+.integrity-report {
+  margin-top: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.report-pass {
+  background: #f0fdf4;
+  border: 1.5px solid #22c55e;
+  color: #15803d;
+}
+.report-fail {
+  background: #fef2f2;
+  border: 1.5px solid #ef4444;
+  color: #b91c1c;
+}
+
+/* ---- Business Systems Box in Sidebar ---- */
+.business-box {
+  border-top: 1px solid var(--rule);
+  padding-top: 1.25rem;
+  margin-top: 1.5rem;
+}
+.business-box h2 {
+  font: 700 1.35rem var(--display);
+  margin-bottom: 0.4rem;
+}
+.business-box p {
+  color: var(--slate);
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+.biz-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.biz-select {
+  padding: 0.35rem 0.6rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.88rem;
+}
+.biz-log {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.biz-item {
+  padding: 0.5rem 0.65rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+.biz-item-head {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+}
+.biz-event-type { color: var(--enamel); }
+.biz-platform { color: var(--brass); }
+.biz-json-toggle {
+  background: none;
+  border: 0;
+  color: var(--enamel);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 0;
+  margin-top: 0.2rem;
+  text-decoration: underline;
+}
+.biz-payload {
+  background: #f1f5f9;
+  padding: 0.4rem;
+  border-radius: 3px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.dispute-presets {
+  margin: 0.6rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sig.is-new { animation: none; }
+}
+@media print {
+  body { background: #fff; }
+  .masthead, .judge-banner, .actions, .side, .visits, .print-btn { display: none !important; }
+  .receipt-page { padding: 0; }
+  .tape { border: 0; max-width: none; }
+  .tape::before, .tape::after { display: none; }
+}
