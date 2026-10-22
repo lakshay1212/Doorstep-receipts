@@ -52,8 +52,24 @@ const state = {
   snapshot: '',
   businessEvents: [],
   showPayload: {},
+  recordingMode: sessionStorage.getItem('recordingMode') !== 'false', // Default to true (Stable Demo Recording Mode)
 };
 let dashKey = sessionStorage.getItem('dashKey') || '';
+
+function updateRecordingUi() {
+  const btn = $('#btn-rec');
+  const label = $('#rec-label');
+  if (!btn || !label) return;
+  if (state.recordingMode) {
+    btn.classList.remove('is-live');
+    label.textContent = 'Recording Mode: Stable';
+    btn.title = 'Demo Recording Mode is Active (background polling paused for 100% stability). Click to switch to Live Polling.';
+  } else {
+    btn.classList.add('is-live');
+    label.textContent = 'Live Polling (3s)';
+    btn.title = 'Live Polling Active: Automatically checking for new Ring webhooks. Click to lock into Stable Recording Mode.';
+  }
+}
 
 function playDoorbellChime() {
   try {
@@ -448,6 +464,29 @@ function renderAll() {
   }
 }
 
+function mergeVisit(existing, incoming) {
+  if (!existing) return incoming;
+
+  // Merge signals: keep all signals ever received for this visit, deduplicating by ID
+  const signalMap = new Map();
+  for (const s of (existing.signals || [])) signalMap.set(s.id, s);
+  for (const s of (incoming.signals || [])) signalMap.set(s.id, s);
+  const mergedSignals = Array.from(signalMap.values()).sort((a, b) => a.at - b.at);
+
+  return {
+    ...incoming,
+    signals: mergedSignals,
+    // Preserve rich states if incoming response is from an un-updated or stale serverless container
+    dispute: incoming.dispute || existing.dispute || null,
+    summary: incoming.summary || existing.summary || null,
+    departureLabel: incoming.departureLabel || existing.departureLabel || null,
+    share: (incoming.share && incoming.share.active) ? incoming.share : (existing.share && existing.share.active ? existing.share : incoming.share),
+    smartLock: (existing.smartLock && existing.smartLock.state === 'active' && incoming.smartLock && incoming.smartLock.state === 'locked' && !incoming.departureLabel)
+      ? existing.smartLock
+      : (incoming.smartLock || existing.smartLock),
+  };
+}
+
 /* ---------- data ---------- */
 async function refresh({ force = false } = {}) {
   const [visits, privacy, bizEvents] = await Promise.all([
@@ -455,19 +494,55 @@ async function refresh({ force = false } = {}) {
     api('/api/privacy'),
     api('/api/business-events').catch(() => []),
   ]);
+
   if (visits && visits.length) {
     const map = new Map(state.visits.map((v) => [v.id, v]));
-    for (const v of visits) map.set(v.id, v);
+    for (const v of visits) {
+      const existing = map.get(v.id);
+      map.set(v.id, mergeVisit(existing, v));
+    }
     state.visits = Array.from(map.values());
   }
+
+  // Keep state.selected strictly locked onto current selection if it still exists
   if (!state.selected || !state.visits.some((v) => v.id === state.selected)) {
     state.selected = state.visits[0]?.id ?? null;
   }
-  const snap = JSON.stringify([state.visits, privacy, bizEvents, state.selected]);
+
+  // Monotonic cumulative tracking for Privacy Gate counters:
+  // Counters reflect processed events and must never bounce downward due to hitting a colder container instance.
+  if (privacy) {
+    state.privacy = {
+      kept: Math.max(state.privacy?.kept || 0, Number(privacy.kept) || 0),
+      discarded: Math.max(state.privacy?.discarded || 0, Number(privacy.discarded) || 0),
+      policy: privacy.policy || state.privacy?.policy || [],
+    };
+  }
+
+  if (bizEvents && bizEvents.length) {
+    const evtMap = new Map((state.businessEvents || []).map((e) => [e.id, e]));
+    for (const e of bizEvents) evtMap.set(e.id, e);
+    state.businessEvents = Array.from(evtMap.values()).sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  // Build a snapshot hash representing true visual data points (ignoring ephemeral millisecond-level time drifts)
+  const snapObj = {
+    selected: state.selected,
+    privacy: state.privacy ? `${state.privacy.kept}_${state.privacy.discarded}` : '',
+    bizCount: state.businessEvents.length,
+    visits: state.visits.map((v) => ({
+      id: v.id,
+      outcome: v.outcome,
+      sigCount: v.signals?.length || 0,
+      hasDispute: !!v.dispute,
+      hasSummary: !!v.summary,
+      hasShare: !!v.share?.active,
+      lockState: v.smartLock?.state,
+    })),
+  };
+  const snap = JSON.stringify(snapObj);
   if (!force && snap === state.snapshot) return;
   state.snapshot = snap;
-  state.privacy = privacy;
-  state.businessEvents = bizEvents;
   renderAll();
 }
 
@@ -689,8 +764,22 @@ document.addEventListener('click', (e) => {
       if (!confirm('Delete every visit and reset the counters?')) return;
       return act(async () => {
         await api('/api/dev/reset', { method: 'POST', body: {} });
+        state.privacy = { kept: 0, discarded: 0, policy: state.privacy?.policy || [] };
+        state.visits = [];
         state.selected = null;
+        state.snapshot = '';
       }, 'Demo data reset.');
+    case 'toggle-recording':
+      state.recordingMode = !state.recordingMode;
+      sessionStorage.setItem('recordingMode', String(state.recordingMode));
+      updateRecordingUi();
+      if (!state.recordingMode) {
+        refresh({ force: true });
+      }
+      toast(state.recordingMode
+        ? 'Demo Recording Mode: Background polling paused. Dashboard is locked stable.'
+        : 'Live Polling Mode: Checking for Ring webhooks every 3s.');
+      return;
     case 'sim':
       if (t.dataset.scenario === 'doorbell_now' || t.dataset.scenario === 'arrive_on_time') {
         playDoorbellChime();
@@ -701,6 +790,7 @@ document.addEventListener('click', (e) => {
 
 /* ---------- boot ---------- */
 async function boot() {
+  updateRecordingUi();
   state.config = await api('/api/config');
   $('#mode').textContent = state.config.simulatorEnabled
     ? 'Demo mode: Ring events come from the built-in simulator, sent through the same signed webhook as real ones.'
@@ -709,6 +799,10 @@ async function boot() {
   state.devices = d.devices;
   if (d.warning) toast(d.warning);
   await refresh({ force: true });
-  setInterval(() => { if (!document.hidden) refresh().catch(() => {}); }, 2500);
+  setInterval(() => {
+    if (!document.hidden && !state.recordingMode) {
+      refresh().catch(() => {});
+    }
+  }, 3000);
 }
 boot().catch((e) => toast(e.message));

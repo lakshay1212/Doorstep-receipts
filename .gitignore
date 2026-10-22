@@ -6,3 +6,5 @@ data/*.tmp
 *.log
 .bin/
 
+.vercel
+.env*
