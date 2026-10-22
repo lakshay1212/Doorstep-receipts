@@ -33,4 +33,9 @@ if (isVercel && !existsSync(dataFile)) {
 const store = new Store(config.dataFile);
 const app = createApp({ config, store });
 
+// Guarantee root requests always serve the dashboard
+app.get('/', (_req, res) => {
+  res.redirect(302, '/index.html');
+});
+
 export default app;
