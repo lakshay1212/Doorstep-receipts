@@ -1,5 +1,6 @@
 node_modules/
 data/*.json
+!data/seed.json
 data/*.tmp
 .env
 *.log

@@ -1,0 +1,508 @@
+{
+  "visits": [
+    {
+      "id": "61c6d06c-377e-4fe1-824a-7f570a2735be",
+      "accountId": "ava1.ring.account.DEMO",
+      "deviceId": "sim-doorbell-front",
+      "title": "Window cleaning",
+      "contractor": "Demo Cleaning Co.",
+      "timeZone": "Asia/Calcutta",
+      "windowStart": 1792089650453,
+      "windowEnd": 1792095050453,
+      "earlyGraceMin": 15,
+      "lateGraceMin": 90,
+      "createdAt": 1792091450453,
+      "signals": [
+        {
+          "id": "sim-doorbell-front_button_press_1792090025430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090025430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090045430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090045430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792090250453",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090250453,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090270453",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090270453,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792090977219",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090977219,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090997219",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090997219,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091217816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091217816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091220346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091220346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091221661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091221661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091225430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091225430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091231296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091231296,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091237816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091237816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091240346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091240346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091241661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091241661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091245430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091245430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091251296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091251296,
+          "excluded": false
+        }
+      ],
+      "departureConfirmedAt": 1792091459510,
+      "share": null,
+      "summary": null
+    },
+    {
+      "id": "6f755269-589a-4043-a44f-f89070e7977c",
+      "accountId": "ava1.ring.account.DEMO",
+      "deviceId": "sim-doorbell-front",
+      "title": "Window cleaning",
+      "contractor": "Demo Cleaning Co.",
+      "timeZone": "UTC",
+      "windowStart": 1792090377219,
+      "windowEnd": 1792095777219,
+      "earlyGraceMin": 15,
+      "lateGraceMin": 90,
+      "createdAt": 1792092177219,
+      "signals": [
+        {
+          "id": "sim-doorbell-front_button_press_1792090025430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090025430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090045430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090045430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792090977219",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090977219,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090997219",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090997219,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091217816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091217816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091220346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091220346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091221661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091221661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091225430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091225430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091231296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091231296,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091237816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091237816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091240346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091240346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091241661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091241661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091245430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091245430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091251296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091251296,
+          "excluded": false
+        }
+      ],
+      "departureConfirmedAt": null,
+      "share": {
+        "token": "msnblk_WkYA1juyu42DKTN6NisZ5tmRN",
+        "expiresAt": 1792696996804
+      },
+      "summary": null
+    },
+    {
+      "id": "8b0ccaa1-97a9-48a9-881a-f18efd35a6e2",
+      "accountId": "ava1.ring.account.DEMO",
+      "deviceId": "sim-doorbell-front",
+      "title": "Boiler service",
+      "contractor": "Demo Plumbing Ltd.",
+      "timeZone": "UTC",
+      "windowStart": 1792077826789,
+      "windowEnd": 1792085026789,
+      "earlyGraceMin": 15,
+      "lateGraceMin": 90,
+      "createdAt": 1792092226789,
+      "signals": [
+        {
+          "id": "sim-doorbell-front_button_press_1792086526789",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792086526789,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792086546789",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792086546789,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792086734481",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792086734481,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792086735744",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792086735744,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792086754481",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792086754481,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792086755744",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792086755744,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792090025430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090025430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090045430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090045430,
+          "excluded": false
+        }
+      ],
+      "departureConfirmedAt": null,
+      "share": null,
+      "summary": null,
+      "dispute": {
+        "contractorClaim": "I arrived at 5:15 PM and rang twice, but the homeowner did not open.",
+        "verdict": "homeowner_favored",
+        "confidence": 0.95,
+        "analysis": "Ring telemetry confirms a verified arrival via doorbell press at 5:48 PM, which was after the agreed window closed (3:23 PM to 5:23 PM).",
+        "recommendedSettlement": "Contractor was physically present but breached the agreed window SLA. Standard partial late-arrival compensation applies.",
+        "source": "template",
+        "auditedAt": 1792092242946
+      }
+    },
+    {
+      "id": "c393b5a6-d041-454d-81c1-a46650de3ff3",
+      "accountId": "ava1.ring.account.DEMO",
+      "deviceId": "sim-doorbell-front",
+      "title": "Window cleaning",
+      "contractor": "Demo Cleaning Co.",
+      "timeZone": "Asia/Calcutta",
+      "windowStart": 1792090617816,
+      "windowEnd": 1792096017816,
+      "earlyGraceMin": 15,
+      "lateGraceMin": 90,
+      "createdAt": 1792092417816,
+      "signals": [
+        {
+          "id": "sim-doorbell-front_button_press_1792090025430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792090025430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792090045430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792090045430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091217816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091217816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091220346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091220346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091221661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091221661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091225430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091225430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_button_press_1792091231296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "button_press",
+          "at": 1792091231296,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091237816",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091237816,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091240346",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091240346,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091241661",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091241661,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091245430",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091245430,
+          "excluded": false
+        },
+        {
+          "id": "sim-doorbell-front_human_1792091251296",
+          "deviceId": "sim-doorbell-front",
+          "kind": "motion_human",
+          "at": 1792091251296,
+          "excluded": false
+        }
+      ],
+      "departureConfirmedAt": null,
+      "share": {
+        "token": "J8v7oSKzXN33XIfjfVOFswk-HjoDhlj5",
+        "expiresAt": 1792697217856
+      },
+      "summary": null
+    }
+  ],
+  "deviceLog": [
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792077437144
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657117019
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657117106
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657117174
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657118988
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657118825
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657118678
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657121910
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657124054
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657125518
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657125523
+    },
+    {
+      "deviceId": "sim-doorbell-front",
+      "status": "offline",
+      "at": 1792657127058
+    }
+  ],
+  "seenRequestIds": [],
+  "counters": {
+    "kept": 15,
+    "discarded": 3
+  }
+}

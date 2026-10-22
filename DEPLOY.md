@@ -17,11 +17,22 @@ ngrok http 3000
 
 These are the standard commands for each tool. Check their current docs if one has changed.
 
-## B. A hosted demo link for judges
+## B. Vercel (1-Click Serverless Deployment)
 
-This is what you put in the Devpost "Try it out" field. Any host that runs a Node 22 web service
-from a GitHub repo works. I checked Render's current free-plan terms, so the steps below use it.
-Railway and Fly.io work the same way, but I did not check their current free terms.
+The project includes pre-configured `vercel.json` and `api/index.ts` serverless handler with automatic `/tmp` persistence and demo visit seeding.
+
+1. Go to **[vercel.com/new](https://vercel.com/new)** and sign in with GitHub.
+2. Under "Import Git Repository", select **`lakshay1212/Doorstep-receipts`**.
+3. Framework Preset: Leave as **Other** (Vercel automatically picks up `vercel.json`).
+4. (Optional) Add Environment Variables:
+   - `ENABLE_SIMULATOR`: `true`
+   - `RING_WEBHOOK_SIGNING_KEY`: (optional, defaults to safe demo key)
+   - `BEDROCK_MODEL_ID`: `anthropic.claude-3-haiku-20240307-v1:0` (if using AWS Bedrock)
+5. Click **Deploy**. Your permanent `https://doorstep-receipts-xxx.vercel.app` will be live in ~30 seconds!
+
+## C. A hosted container service (Render, Railway, Fly.io)
+
+This is an alternative if you prefer a continuous long-running Node 22 process:
 
 What Render's free web service does, per its docs:
 - It spins down after 15 minutes without traffic and wakes on the next request, so the first
