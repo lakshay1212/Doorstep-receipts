@@ -124,13 +124,20 @@ function statusText(v) {
   return v.outcomeLabel;
 }
 
+function updateHtml(el, newHtml) {
+  if (el && el.innerHTML !== newHtml) {
+    el.innerHTML = newHtml;
+  }
+}
+
 function renderList() {
   const list = $('#visit-list');
+  if (!list) return;
   if (!state.visits.length) {
-    list.innerHTML = '<li class="empty">No visits yet. Create one to start watching a door.</li>';
+    updateHtml(list, '<li class="empty">No visits yet. Create one to start watching a door.</li>');
     return;
   }
-  list.innerHTML = state.visits
+  const html = state.visits
     .map(
       (v) => `<li><button type="button" class="visit outcome-${esc(v.outcome)}${v.id === state.selected ? ' is-selected' : ''}" data-action="select" data-visit="${esc(v.id)}">
         <span class="visit-title">${esc(v.title)}</span>
@@ -140,6 +147,7 @@ function renderList() {
       </button></li>`,
     )
     .join('');
+  updateHtml(list, html);
 }
 
 function factRows(v) {
@@ -296,7 +304,7 @@ function renderDetail() {
       : 'Template summary built from the facts above.'
     : '';
 
-  el.innerHTML = `
+  const detailHtml = `
     <article class="tape outcome-${esc(v.outcome)}" aria-label="Receipt ${esc(v.receiptNo)}">
       <header class="tape-head">
         <p class="brand">Doorstep Receipts</p>
@@ -350,21 +358,22 @@ function renderDetail() {
       </div>
       <div class="action-row action-row-end"><button type="button" class="btn small danger" data-action="delete">${icon('trash')}Delete visit and its data</button></div>
     </section>`;
+  updateHtml(el, detailHtml);
 }
 
 function renderSide() {
   const p = state.privacy;
-  $('#ledger').innerHTML = p
+  updateHtml($('#ledger'), p
     ? `<h2 id="ledger-h">Privacy Gate</h2>
        <div class="ledger-figures"><div><b>${p.kept}</b><span>signals kept</span></div><div><b>${p.discarded}</b><span>discarded</span></div></div>
        <ul>${p.policy.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`
-    : '';
+    : '');
 
   const v = selectedVisit();
 
   // Business systems box
   const bizBox = $('#business-box');
-  bizBox.innerHTML = `
+  const bizHtml = `
     <h2 id="biz-h">Business Systems Integration</h2>
     <p>Dispatch verified arrival events to field service platforms (Jobber, Stripe, Housecall Pro).</p>
     <div class="biz-actions">
@@ -396,6 +405,7 @@ function renderSide() {
       }
     </div>
   `;
+  updateHtml(bizBox, bizHtml);
 
   const sim = $('#sim');
   if (!state.config.simulatorEnabled) {
@@ -409,7 +419,7 @@ function renderSide() {
     return `<button type="button" class="btn small" data-action="sim" data-scenario="${esc(sc)}"${why ? ` disabled title="${esc(why)}"` : ''}>
       <span class="label">${esc(SCENARIO_LABELS[sc] || sc)}</span>${why ? `<span class="why">${esc(why)}</span>` : ''}</button>`;
   };
-  sim.innerHTML = `<h2 id="sim-h">Simulate Ring Doorbell</h2>
+  const simHtml = `<h2 id="sim-h">Simulate Ring Doorbell</h2>
     <p>Signed HMAC Ring webhook v1.1 payloads.</p>
     <div class="sim-group">
       <h3>Quick presets</h3>
@@ -425,6 +435,7 @@ function renderSide() {
     <div class="sim-group">
       <button type="button" class="btn small danger" data-action="demo-reset">${icon('rotate-ccw')}<span class="label">Reset demo data</span></button>
     </div>`;
+  updateHtml(sim, simHtml);
 }
 
 function renderAll() {
@@ -432,7 +443,9 @@ function renderAll() {
   renderDetail();
   renderSide();
   const v = selectedVisit();
-  state.seen = new Set(v ? v.signals.map((s) => s.id) : []);
+  if (v && v.signals) {
+    for (const s of v.signals) state.seen.add(s.id);
+  }
 }
 
 /* ---------- data ---------- */
@@ -442,13 +455,19 @@ async function refresh({ force = false } = {}) {
     api('/api/privacy'),
     api('/api/business-events').catch(() => []),
   ]);
-  const snap = JSON.stringify([visits, privacy, bizEvents, state.selected]);
+  if (visits && visits.length) {
+    const map = new Map(state.visits.map((v) => [v.id, v]));
+    for (const v of visits) map.set(v.id, v);
+    state.visits = Array.from(map.values());
+  }
+  if (!state.selected || !state.visits.some((v) => v.id === state.selected)) {
+    state.selected = state.visits[0]?.id ?? null;
+  }
+  const snap = JSON.stringify([state.visits, privacy, bizEvents, state.selected]);
   if (!force && snap === state.snapshot) return;
   state.snapshot = snap;
-  state.visits = visits;
   state.privacy = privacy;
   state.businessEvents = bizEvents;
-  if (!state.visits.some((v) => v.id === state.selected)) state.selected = state.visits[0]?.id ?? null;
   renderAll();
 }
 

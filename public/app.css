@@ -114,7 +114,11 @@
 
 /* ---------- RESET ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
 body {
   margin: 0;
   background: var(--canvas);
