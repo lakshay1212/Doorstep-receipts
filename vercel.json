@@ -1,7 +1,26 @@
 {
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/index.html",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
+      "destination": "/api/index.ts"
+    },
+    {
+      "source": "/webhooks/(.*)",
+      "destination": "/api/index.ts"
+    },
+    {
+      "source": "/healthz",
+      "destination": "/api/index.ts"
+    },
+    {
+      "source": "/r/(.*)",
       "destination": "/api/index.ts"
     }
   ]
